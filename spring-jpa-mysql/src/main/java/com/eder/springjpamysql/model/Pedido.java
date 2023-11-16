@@ -1,4 +1,4 @@
-package model;
+package com.eder.springjpamysql.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,7 +18,6 @@ public class Pedido {
 	private BigDecimal valorUnitario;
 	private Integer qtdeProduto;
 	private BigDecimal valorTotal = BigDecimal.ONE;
-	@ManyToOne
 	@JoinColumn
 	private Integer codCliente;
 	
