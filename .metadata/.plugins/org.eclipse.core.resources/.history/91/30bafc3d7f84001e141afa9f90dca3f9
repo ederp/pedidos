@@ -1,0 +1,65 @@
+package model;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Pedido {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idPedido;
+	private Integer numPedido;
+	private LocalDate dataCadastro;
+	private String nomeProduto;
+	private BigDecimal valorUnitario;
+	private Integer qtdeProduto;
+	private BigDecimal valorTotal = BigDecimal.ONE;
+	private Integer codCliente;
+	
+	public Pedido(Integer idPedido, Integer numPedido, LocalDate dataCadastro, String nomeProduto,
+			BigDecimal valorUnitario, Integer qtdeProduto, Integer codCliente) {
+		super();
+		this.idPedido = idPedido;
+		this.numPedido = numPedido;
+		this.dataCadastro = dataCadastro;
+		this.nomeProduto = nomeProduto;
+		this.valorUnitario = valorUnitario;
+		this.qtdeProduto = qtdeProduto;
+		this.valorTotal = this.valorUnitario.multiply(BigDecimal.valueOf(this.qtdeProduto));
+		this.codCliente = codCliente;
+	}
+
+	//construtor sem o campo dataCadastro
+	public Pedido(Integer idPedido, Integer numPedido, String nomeProduto,
+			BigDecimal valorUnitario, Integer qtdeProduto, Integer codCliente) {
+		this(idPedido, numPedido, LocalDate.now(), nomeProduto, valorUnitario, qtdeProduto, codCliente);
+		
+	}
+	
+	//construtor sem o campo qtdeProduto
+	public Pedido(Integer idPedido, Integer numPedido, LocalDate dataCadastro, String nomeProduto,
+			BigDecimal valorUnitario, BigDecimal valorTotal, Integer codCliente) {
+		this(idPedido, numPedido, dataCadastro, nomeProduto, valorUnitario, 1, codCliente);
+	}
+
+	//construtor sem os campos dataCadastro e qtdeProduto
+	public Pedido(Integer idPedido, Integer numPedido, String nomeProduto,
+			BigDecimal valorUnitario, Integer codCliente)  {
+		this(idPedido, numPedido, LocalDate.now(), nomeProduto, valorUnitario, 1, codCliente);
+	}
+	
+	public BigDecimal calculaValorTotal(BigDecimal valorUnitario, Integer qtdeProduto) {
+		this.valorTotal = valorUnitario.multiply(BigDecimal.valueOf(qtdeProduto));
+		if (qtdeProduto > 5 && qtdeProduto < 9) {
+			this.valorTotal = valorTotal.multiply(BigDecimal.valueOf(0.95));
+		} else if (qtdeProduto >= 10) {
+			this.valorTotal = valorTotal.multiply(BigDecimal.valueOf(0.9));
+		}
+	}
+}

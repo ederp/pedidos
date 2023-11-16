@@ -1,0 +1,12 @@
+CREATE TABLE `mydatabase`.`pedido` (
+ `numControlePedido` INT NOT NULL,
+ `dataCadastro` DATE NOT NULL,
+ `nomeProduto` VARCHAR(255) NOT NULL,
+ `valorUnitario` DECIMAL(10, 2) NOT NULL,
+ `qtdeProduto` INT NOT NULL,
+ `valorTotal` DECIMAL(10, 2) NOT NULL,
+ `codCliente` INT NOT NULL,
+ PRIMARY KEY (`numControlePedido`));
+
+ ALTER TABLE `mydatabase`.`contact`
+ ADD UNIQUE INDEX `id_UNIQUE` (`id` ASC);

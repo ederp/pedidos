@@ -1,0 +1,5 @@
+package com.eder.springjpamysql.PedidoController;
+
+public class PedidoController {
+
+}
