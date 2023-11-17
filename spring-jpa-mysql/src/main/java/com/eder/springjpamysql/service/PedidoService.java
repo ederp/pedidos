@@ -3,12 +3,15 @@ package com.eder.springjpamysql.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.eder.springjpamysql.model.Pedido;
 
+@Service
 public class PedidoService {
 	
 	private PedidoRepository repository;
@@ -19,6 +22,15 @@ public class PedidoService {
 	}
 	
 	private Pedido create(Pedido pedido) {
+		Optional<LocalDate> optDataCadastro = Optional.ofNullable(pedido.getDataCadastro());
+		Optional<Integer> optQtdeProduto = Optional.ofNullable(pedido.getQtdeProduto());
+		
+		if (optDataCadastro.isEmpty()) {
+			pedido.setDataCadastro(LocalDate.now());
+		}
+		if (optQtdeProduto.isEmpty()) {
+			pedido.setQtdeProduto(1);
+		}
 		return repository.save(pedido);
 	}
 

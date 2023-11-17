@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
 
 @Entity
 public class Pedido {
@@ -21,6 +21,12 @@ public class Pedido {
 	@JoinColumn
 	private Integer codCliente;
 	
+	public Pedido() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@SuppressWarnings("deprecation")
 	public Pedido(Integer numControlePedido, LocalDate dataCadastro, String nomeProduto,
 			BigDecimal valorUnitario, Integer qtdeProduto, Integer codCliente) {
 		super();
@@ -28,30 +34,12 @@ public class Pedido {
 		this.dataCadastro = dataCadastro;
 		this.nomeProduto = nomeProduto;
 		this.valorUnitario = valorUnitario;
+		this.valorUnitario = this.valorUnitario.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 		this.qtdeProduto = qtdeProduto;
 		this.setValorTotal(this.valorUnitario, this.qtdeProduto);
 		this.codCliente = codCliente;
 	}
-
-	//construtor sem o campo dataCadastro
-	public Pedido(Integer numControlePedido, String nomeProduto,
-			BigDecimal valorUnitario, Integer qtdeProduto, Integer codCliente) {
-		this(numControlePedido, LocalDate.now(), nomeProduto, valorUnitario, qtdeProduto, codCliente);
-		
-	}
 	
-	//construtor sem o campo qtdeProduto
-	public Pedido(Integer numControlePedido, LocalDate dataCadastro, String nomeProduto,
-			BigDecimal valorUnitario, BigDecimal valorTotal, Integer codCliente) {
-		this(numControlePedido, dataCadastro, nomeProduto, valorUnitario, 1, codCliente);
-	}
-
-	//construtor sem os campos dataCadastro e qtdeProduto
-	public Pedido(Integer numControlePedido, String nomeProduto,
-			BigDecimal valorUnitario, Integer codCliente)  {
-		this(numControlePedido, LocalDate.now(), nomeProduto, valorUnitario, 1, codCliente);
-	}
-
 	public Integer getnumControlePedido() {
 		return numControlePedido;
 	}
@@ -90,6 +78,7 @@ public class Pedido {
 
 	public void setQtdeProduto(Integer qtdeProduto) {
 		this.qtdeProduto = qtdeProduto;
+		this.setValorTotal(this.valorUnitario, this.qtdeProduto);
 	}
 
 	public BigDecimal getValorTotal() {

@@ -1,12 +1,9 @@
 package com.eder.springjpamysql.model;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Cliente {
@@ -16,6 +13,11 @@ public class Cliente {
 	private Integer codCliente;
 	private String nomeCliente;
 	
+	public Cliente() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public Cliente(Integer codCliente, String nomeCliente) {
 		super();
 		this.codCliente = codCliente;
