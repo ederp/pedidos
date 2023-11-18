@@ -22,15 +22,7 @@ public class PedidoService {
 	}
 	
 	private Pedido create(Pedido pedido) {
-		Optional<LocalDate> optDataCadastro = Optional.ofNullable(pedido.getDataCadastro());
-		Optional<Integer> optQtdeProduto = Optional.ofNullable(pedido.getQtdeProduto());
-		
-		if (optDataCadastro.isEmpty()) {
-			pedido.setDataCadastro(LocalDate.now());
-		}
-		if (optQtdeProduto.isEmpty()) {
-			pedido.setQtdeProduto(1);
-		}
+		this.validaCamposOpcionais(pedido);
 		return repository.save(pedido);
 	}
 
@@ -56,5 +48,17 @@ public class PedidoService {
 			.limit(10)
 			.forEach(pedido -> pedidosCriados.add(this.create(pedido)));
 		return pedidosCriados;
+	}
+	
+	private void validaCamposOpcionais(Pedido pedido) {
+		Optional<String> optDataCadastro = Optional.ofNullable(pedido.getDataCadastro());
+		Optional<Integer> optQtdeProduto = Optional.ofNullable(pedido.getQtdeProduto());
+		
+		if (optDataCadastro.isEmpty()) {
+			pedido.setDataCadastro(LocalDate.now());
+		} 
+		if (optQtdeProduto.isEmpty()) {
+			pedido.setQtdeProduto(1);
+		}
 	}
 }

@@ -37,9 +37,21 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
     		<groupId>com.fasterxml.jackson.core</groupId>
     		<artifactId>jackson-databind</artifactId>
 		</dependency>
+		<dependency>
+     		<groupId>com.fasterxml.jackson.dataformat</groupId>
+     		<artifactId>jackson-dataformat-xml</artifactId>
+ 		</dependency>
 		<!-- support for "Java 8 Dates" -->
   		<dependency>
       		<groupId>com.fasterxml.jackson.datatype</groupId>

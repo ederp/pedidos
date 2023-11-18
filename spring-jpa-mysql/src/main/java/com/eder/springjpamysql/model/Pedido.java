@@ -1,14 +1,21 @@
 package com.eder.springjpamysql.model;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlRootElement;
+
 
 
 @Entity
+@XmlRootElement
 public class Pedido {
 	
 	@Id
@@ -20,6 +27,10 @@ public class Pedido {
 	private BigDecimal valorTotal = BigDecimal.ONE;
 	@JoinColumn
 	private Integer codCliente;
+	@Transient
+	private DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	@Transient
+	private NumberFormat formatadorMoeda = DecimalFormat.getCurrencyInstance();
 	
 	public Pedido() {
 		super();
@@ -27,13 +38,13 @@ public class Pedido {
 	}
 
 	@SuppressWarnings("deprecation")
-	public Pedido(Integer numControlePedido, LocalDate dataCadastro, String nomeProduto,
-			BigDecimal valorUnitario, Integer qtdeProduto, Integer codCliente) {
+	public Pedido(Integer numControlePedido, String dataCadastro, String nomeProduto,
+			String valorUnitario, Integer qtdeProduto, Integer codCliente) {
 		super();
 		this.numControlePedido = numControlePedido;
-		this.dataCadastro = dataCadastro;
+		this.dataCadastro = this.formataDataEntrada(dataCadastro);
 		this.nomeProduto = nomeProduto;
-		this.valorUnitario = valorUnitario;
+		this.valorUnitario = this.formataMoedaEntrada(valorUnitario);
 		this.valorUnitario = this.valorUnitario.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 		this.qtdeProduto = qtdeProduto;
 		this.setValorTotal(this.valorUnitario, this.qtdeProduto);
@@ -48,10 +59,14 @@ public class Pedido {
 		this.numControlePedido = numControlePedido;
 	}
 
-	public LocalDate getDataCadastro() {
-		return dataCadastro;
+	public String getDataCadastro() {
+		return this.formataDataSaida(dataCadastro);
 	}
 
+	public void setDataCadastro(String dataCadastro) {
+		this.dataCadastro = this.formataDataEntrada(dataCadastro);
+	}
+	
 	public void setDataCadastro(LocalDate dataCadastro) {
 		this.dataCadastro = dataCadastro;
 	}
@@ -64,12 +79,12 @@ public class Pedido {
 		this.nomeProduto = nomeProduto;
 	}
 
-	public BigDecimal getValorUnitario() {
-		return valorUnitario;
+	public String getValorUnitario() {
+		return this.formataMoedaSaida(valorUnitario);
 	}
 
-	public void setValorUnitario(BigDecimal valorUnitario) {
-		this.valorUnitario = valorUnitario;
+	public void setValorUnitario(String valorUnitario) {
+		this.valorUnitario = this.formataMoedaEntrada(valorUnitario);
 	}
 
 	public Integer getQtdeProduto() {
@@ -81,8 +96,8 @@ public class Pedido {
 		this.setValorTotal(this.valorUnitario, this.qtdeProduto);
 	}
 
-	public BigDecimal getValorTotal() {
-		return valorTotal;
+	public String getValorTotal() {
+		return this.formataMoedaSaida(valorTotal);
 	}
 
 	//setado como private pois deve ser um valor calculado somente pela classe Pedido
@@ -101,6 +116,26 @@ public class Pedido {
 
 	public void setCodCliente(Integer codCliente) {
 		this.codCliente = codCliente;
+	}
+	
+	private LocalDate formataDataEntrada(String dataEntrada) {
+		return LocalDate.parse(dataEntrada, this.formatadorData);
+	}
+	
+	private String formataDataSaida(LocalDate dataSaida) {
+		try {
+			return this.formatadorData.format(dataSaida);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private BigDecimal formataMoedaEntrada(String moedaEntrada){
+		return new BigDecimal(moedaEntrada.split(" ")[1].replace(",", "."));
+	}
+	
+	private String formataMoedaSaida(BigDecimal moedaSaida) {
+		return this.formatadorMoeda.format(moedaSaida);
 	}
 	
 }

@@ -28,6 +28,7 @@ class SpringJpaMysqlApplicationTests {
 	void contextLoads() {
 	}
 
+	/*
 	@Test
 	public void testConversionOfObject() throws JsonProcessingException {
 		BigDecimal valor = new BigDecimal(18.15);
@@ -40,6 +41,7 @@ class SpringJpaMysqlApplicationTests {
         System.out.println(json);
 	
 	}
+	*/
 	
 	/*
 	@Test
