@@ -1,79 +1,110 @@
 package com.eder.springjpamysql;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.eder.springjpamysql.model.Pedido;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 class SpringJpaMysqlApplicationTests {
 	
-	Pedido pedido;
+	private Pedido pedido;
+	@Autowired
+    private MockMvc mockMvc;
 
 	@Test
 	void contextLoads() {
 	}
 
+	//testes de algumas regras de negócio
+	@Test
+	public void testCalculoValorTotal(){
+		pedido = new Pedido(235, "15/11/2023", "Capa para IPhone 13", "R$ 20,00", 3, 5);
+		assertTrue(pedido.getValorTotal().contains("60,00"));
+	}
+	
+	@Test
+	public void testDescontoCincoPorCento() {
+		pedido = new Pedido(235, "15/11/2023", "Capa para IPhone 13", "R$ 20,00", 6, 5);
+		assertTrue(pedido.getValorTotal().contains("114,00"));
+	}
+	
+	@Test
+	public void testDescontoDezPorCento() {
+		pedido = new Pedido(235, "15/11/2023", "Capa para IPhone 13", "R$ 20,00", 11, 5);
+		assertTrue(pedido.getValorTotal().contains("198,00"));
+	}
+	
+	//testes de funcionamento dos endpoints
+	@Test
+	public void testGetPedidos() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders
+					.get("/pedidos")
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[*]").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[*].numControlePedido").isNotEmpty());
+	}
+	
+	@Test
+	public void testGetPedidoByNumControlePedido() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders
+					.get("/pedidos/id/{numControlePedido}", 2503)
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.numControlePedido").value(2503));
+	}
+	
+	@Test
+	public void testGetPedidoByDataCadastro() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders
+					.get("/pedidos/data/{dataCadastro}", "2023-11-17")
+					.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[*].dataCadastro").isNotEmpty());
+	}
+	
 	/*
 	@Test
-	public void testConversionOfObject() throws JsonProcessingException {
-		BigDecimal valor = new BigDecimal(18.15);
+	public void testPostJson() throws Exception {
 		List<Pedido> pedidos = new ArrayList<>();
-		pedido = new Pedido(235, LocalDate.of(2023, 10, 23), "Capa para IPhone 13", valor, 3, 5);
+		pedido = new Pedido(435, "16/11/2023", "Controle para Xbox One", "R$ 400,00", 1, 6);
 		pedidos.add(pedido);
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new JavaTimeModule());
-        String json = objectMapper.writeValueAsString(pedidos);
-        System.out.println(json);
+		mockMvc.perform(MockMvcRequestBuilders
+					.post("/pedidos")
+					.contentType("application/json")
+					.content(asJsonString(pedidos.get(0))))
+		        .andExpect(status().isCreated())
+		        .andExpect(MockMvcResultMatchers.jsonPath("$.numControlePedido").exists());
+	}
 	
+	@Test
+	public void testPostXml() throws Exception {
+		List<Pedido> pedidos = new ArrayList<>();
+		pedido = new Pedido(999, "17/11/2023", "Refrigerante Coca-Cola 350 ml", "R$ 4,00", 5, 6);
+		pedidos.add(pedido);
+		mockMvc.perform(MockMvcRequestBuilders
+					.post("/pedidos")
+					.content(asJsonString(pedidos))
+					.contentType("application/xml"))
+		        .andExpect(status().isCreated())
+		        .andExpect(MockMvcResultMatchers.jsonPath("$.numControlePedido").exists());
 	}
 	*/
 	
-	/*
-	@Test
-	public final void givenJsonWithValidList_whenDeserializing_thenCorrect() throws JsonParseException, IOException {
-	    String json = "{\n"
-	    		+ "    \"pedidos\": [{\n"
-	    		+ "        \"numControlePedido\": 2503, \n"
-	    		+ "        \"nomeProduto\": \"Playstation 5\",\n"
-	    		+ "        \"valorUnitario\": 3500.00,\n"
-	    		+ "        \"codCliente\": 1\n"
-	    		+ "    }]\n"
-	    		+ "}";
-	    List<ObjectMapper> mapper = new ArrayList<ObjectMapper>();
-
-	    List<Pedido> pedidos =  new ArrayList<>();
-	    mapper.forEach(m -> {
-			try {
-				m.reader().forType(Pedido.class).readValue(json);
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}); 
-
-	    pedidos.forEach(pedido -> {
-	    	assertEquals(2503, pedido.getnumControlePedido());
-	    	//assertEquals();
-		    assertEquals("Playstation 5", pedido.getNomeProduto());
-	    	assertEquals("3500.00", pedido.getValorUnitario().toString());
-	    	assertEquals("3500.00", pedido.getValorTotal().toString());
-		    assertEquals(5, pedido.getCodCliente());
-	    });
-	    
-	} */
 }
