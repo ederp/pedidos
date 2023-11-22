@@ -2,9 +2,12 @@ package com.eder.springjpamysql.model;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,7 +33,9 @@ public class Pedido {
 	@Transient
 	private DateTimeFormatter formatadorData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	@Transient
-	private NumberFormat formatadorMoeda = DecimalFormat.getCurrencyInstance();
+	private DecimalFormatSymbols dfs = new DecimalFormatSymbols(new Locale("pt", "BR"));
+	@Transient
+	private NumberFormat formatadorMoeda = new DecimalFormat("¤ #.00", dfs);
 	
 	public Pedido() {
 		super();
@@ -131,11 +136,30 @@ public class Pedido {
 	}
 	
 	private BigDecimal formataMoedaEntrada(String moedaEntrada){
-		return new BigDecimal(moedaEntrada.split(" ")[1].replace(",", "."));
+		String valor = null;
+		try {
+			valor = formatadorMoeda.parse(moedaEntrada).toString();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new BigDecimal(valor);
 	}
 	
 	private String formataMoedaSaida(BigDecimal moedaSaida) {
 		return this.formatadorMoeda.format(moedaSaida);
 	}
-	
+
+	@Override
+	public String toString() {
+		return "{" +
+					"\"numControlePedido\": "+this.getnumControlePedido()+", "+
+					"\"dataCadastro\": \""+this.getDataCadastro()+"\", "+
+					"\"nomeProduto\": \""+this.getNomeProduto()+"\", "+
+					"\"valorUnitario\": \""+this.getValorUnitario()+"\", "+
+					"\"qtdeProduto\": "+this.getQtdeProduto()+", "+
+					"\"codCliente\": "+this.getCodCliente()+""+
+				"}";
+				
+	}
 }

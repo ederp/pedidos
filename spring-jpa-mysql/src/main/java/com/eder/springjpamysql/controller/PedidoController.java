@@ -1,5 +1,6 @@
 package com.eder.springjpamysql.controller;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -39,7 +40,8 @@ public class PedidoController {
 	 }
 	 
 	 @PostMapping
-	 public List<Pedido> create(@RequestBody List<Pedido> pedidos){
-		 return pedidoService.createPedidos(pedidos);
+	 public ResponseEntity<List<Pedido>> create(@RequestBody List<Pedido> pedidos){
+		 URI location = URI.create("/pedidos");
+		 return ResponseEntity.created(location).body(pedidoService.createPedidos(pedidos));
 	 }
 }

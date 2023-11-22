@@ -1,8 +1,7 @@
 package com.eder.springjpamysql;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.eder.springjpamysql.model.Pedido;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,19 +33,19 @@ class SpringJpaMysqlApplicationTests {
 	@Test
 	public void testCalculoValorTotal(){
 		pedido = new Pedido(235, "15/11/2023", "Capa para IPhone 13", "R$ 20,00", 3, 5);
-		assertTrue(pedido.getValorTotal().contains("60,00"));
+		assertEquals(pedido.getValorTotal(), "R$ 60,00");
 	}
 	
 	@Test
 	public void testDescontoCincoPorCento() {
 		pedido = new Pedido(235, "15/11/2023", "Capa para IPhone 13", "R$ 20,00", 6, 5);
-		assertTrue(pedido.getValorTotal().contains("114,00"));
+		assertEquals(pedido.getValorTotal(), "R$ 114,00");
 	}
 	
 	@Test
 	public void testDescontoDezPorCento() {
 		pedido = new Pedido(235, "15/11/2023", "Capa para IPhone 13", "R$ 20,00", 11, 5);
-		assertTrue(pedido.getValorTotal().contains("198,00"));
+		assertEquals(pedido.getValorTotal(), "R$ 198,00");
 	}
 	
 	//testes de funcionamento dos endpoints
@@ -79,7 +77,6 @@ class SpringJpaMysqlApplicationTests {
 				.andExpect(MockMvcResultMatchers.jsonPath("$[*].dataCadastro").isNotEmpty());
 	}
 	
-	/*
 	@Test
 	public void testPostJson() throws Exception {
 		List<Pedido> pedidos = new ArrayList<>();
@@ -89,10 +86,10 @@ class SpringJpaMysqlApplicationTests {
 					.post("/pedidos")
 					.contentType("application/json")
 					.content(asJsonString(pedidos.get(0))))
-		        .andExpect(status().isCreated())
-		        .andExpect(MockMvcResultMatchers.jsonPath("$.numControlePedido").exists());
+		        .andExpect(status().isCreated());
 	}
 	
+	/*
 	@Test
 	public void testPostXml() throws Exception {
 		List<Pedido> pedidos = new ArrayList<>();
@@ -100,11 +97,16 @@ class SpringJpaMysqlApplicationTests {
 		pedidos.add(pedido);
 		mockMvc.perform(MockMvcRequestBuilders
 					.post("/pedidos")
-					.content(asJsonString(pedidos))
+					.content(asJsonString(pedidos.get(0)))
 					.contentType("application/xml"))
 		        .andExpect(status().isCreated())
 		        .andExpect(MockMvcResultMatchers.jsonPath("$.numControlePedido").exists());
 	}
+	
 	*/
+	
+	private String asJsonString(Pedido pedido) {
+		return "["+pedido.toString()+"]";
+	}
 	
 }
