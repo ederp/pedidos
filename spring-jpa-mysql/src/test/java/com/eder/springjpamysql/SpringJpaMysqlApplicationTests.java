@@ -89,7 +89,6 @@ class SpringJpaMysqlApplicationTests {
 		        .andExpect(status().isCreated());
 	}
 	
-	/*
 	@Test
 	public void testPostXml() throws Exception {
 		List<Pedido> pedidos = new ArrayList<>();
@@ -97,16 +96,27 @@ class SpringJpaMysqlApplicationTests {
 		pedidos.add(pedido);
 		mockMvc.perform(MockMvcRequestBuilders
 					.post("/pedidos")
-					.content(asJsonString(pedidos.get(0)))
+					.content(asXmlString(pedidos.get(0)))
 					.contentType("application/xml"))
-		        .andExpect(status().isCreated())
-		        .andExpect(MockMvcResultMatchers.jsonPath("$.numControlePedido").exists());
+		        .andExpect(status().isCreated());
 	}
 	
-	*/
 	
 	private String asJsonString(Pedido pedido) {
 		return "["+pedido.toString()+"]";
+	}
+	
+	private String asXmlString(Pedido pedido) {
+		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				+ "<root>\n"
+				+ "   <element>\n"
+				+ "      <codCliente>"+pedido.getCodCliente()+"</codCliente>\n"
+				+ "      <nomeProduto>"+pedido.getNomeProduto()+"</nomeProduto>\n"
+				+ "      <numControlePedido>"+pedido.getnumControlePedido()+"</numControlePedido>\n"
+				+ "      <valorUnitario>"+pedido.getValorUnitario()+"</valorUnitario>\n"
+				+ "      <qtdeProduto>"+pedido.getQtdeProduto()+"</qtdeProduto>\n"
+				+ "   </element>\n"
+				+ "</root>";
 	}
 	
 }

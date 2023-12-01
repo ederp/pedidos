@@ -46,3 +46,5 @@ banco de dados mysql
 utilizar framework ORM  
 utilizar a linguagem java 1.8
 
+Obs.: Foi gerado uma configuração para a documentação da API no Swagger, acessível através do link [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html#/) assim que a aplicação é executada no servidor.
+
