@@ -13,12 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
 
 
 
 @Entity
-@XmlRootElement
 public class Pedido {
 	
 	@Id
@@ -56,11 +54,11 @@ public class Pedido {
 		this.codCliente = codCliente;
 	}
 	
-	public Integer getnumControlePedido() {
+	public Integer getNumControlePedido() {
 		return numControlePedido;
 	}
 
-	public void setnumControlePedido(Integer numControlePedido) {
+	public void setNumControlePedido(Integer numControlePedido) {
 		this.numControlePedido = numControlePedido;
 	}
 
@@ -150,16 +148,4 @@ public class Pedido {
 		return this.formatadorMoeda.format(moedaSaida);
 	}
 
-	@Override
-	public String toString() {
-		return "{" +
-					"\"numControlePedido\": "+this.getnumControlePedido()+", "+
-					"\"dataCadastro\": \""+this.getDataCadastro()+"\", "+
-					"\"nomeProduto\": \""+this.getNomeProduto()+"\", "+
-					"\"valorUnitario\": \""+this.getValorUnitario()+"\", "+
-					"\"qtdeProduto\": "+this.getQtdeProduto()+", "+
-					"\"codCliente\": "+this.getCodCliente()+""+
-				"}";
-				
-	}
 }
